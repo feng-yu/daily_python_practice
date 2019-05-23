@@ -1,5 +1,9 @@
 """
-show the inner or nested function
+show the inner or nested function.
+It's used in following scenario:
+1. Encapsulate (hiding the function from public use)
+2. Factory function to generate another function object
+3. Calling some specific code
 """
 import math
 
@@ -35,11 +39,46 @@ print(power_two(8))  #256
 print(power_three(4))  #381
 
 
-def cons(a, b):
-    def pair(f):
-        return f(a, b)
-    return pair
+"""
+call some specific code example
+"""
+def counter():
+    for x in range(1000):
+        pass
 
-a = cons(2, 3)
-print(a(math.pow))
+
+def in_club(name, club):
+    pass
+
+
+def whats_running(function):
+
+    def new_function():
+        print(function.__name__, 'has started.')
+        function()
+        print(function.__name__, 'has ended')
+
+    return new_function
+
+
+def time_this(function):
+    import time
+
+    def wrapper(*args, **kargs):
+        start = time.time()
+        function(*args, **kargs)
+        end = time.time()
+        print(f'{function.__name__} takes {end - start} seconds to execute')
+
+    wrapper.__name__ = function.__name__ + '_timed'
+    return wrapper
+
+
+counter = time_this(counter)
+print(counter.__name__)
+in_club = whats_running(in_club)
+
+counter()
+in_club('John', 'pass')
+
 
