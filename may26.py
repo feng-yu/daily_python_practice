@@ -14,6 +14,7 @@ For example, the following tree has 5 unival subtrees:
   / \
  1   1
 """
+import random
 
 
 class Node:
@@ -21,6 +22,35 @@ class Node:
         self.left = None
         self.right = None
         self.data = data
+
+    def insert(self, data):
+        """always try to add as left child"""
+        if self.left is None:
+            self.left = Node(data)
+        elif self.right is None:
+            self.right = Node(data)
+        else:
+            if random.randint(0,1):   #is 0 go to left, otherwise go to right
+                self.right.insert(data)
+            else:
+                self.left.insert(data)
+
+    def print_node(self):
+        if self.left:
+            self.left.print_node()
+        print( self.data)
+        if self.right:
+            self.right.print_node()
+
+
+    def __str__(self):
+        str_node = ''
+        if self.left:
+            str_node += str(self.left)
+        str_node = str_node + ' ' + str(self.data)
+        if self.right:
+            str_node = str_node + ' ' + str(self.right)
+        return str_node
 
 
 def is_unival(root):
@@ -70,3 +100,49 @@ def count_unival_helper(root):
 def count_unival(root):
     count, _ = count_unival_helper(root)
     return count
+
+"""
+[easy]
+Problem:  Given the root to a binary tree, count the total number of nodes there are.
+"""
+def count_node(root):
+    return count_node(root.left) + count_node(root.right) + 1 if root else 0
+
+
+"""
+[easy}
+Problem:  Given the root to a binary tree, return the deepest node.
+"""
+def increment_depth(deepest_tuple):
+    node, depth = deepest_tuple
+    return node, depth+1
+
+
+def deepest_node(node):
+    if node and not node.left and not node.right:   #leaf
+        return node, 1
+    if node.left:
+        return increment_depth(deepest_node(node.left))
+    if node.right:
+        return increment_depth(deepest_node(node.right))
+    return increment_depth(max(deepest_node(node.left), deepest_node(node.right),
+               key=lambda x: x[1]))
+
+
+def nodetest():
+    root = Node(1)
+    root.insert(2)
+    root.insert(3)
+    root.insert(4)
+    root.insert(5)
+    root.insert(6)
+    root.insert(7)
+    root.insert(8)
+    root.insert(9)
+    root.insert(10)
+    root.print_node()
+    print(count_node(root))
+    d_node, depth = deepest_node(root)
+    print(f'Deepest node has value: {d_node.data} with depth: {depth}')
+
+nodetest()
